@@ -5,7 +5,7 @@ local buf, win, bg_buf, bg_win
 
 local defaults = {
 	development_logs = false, --
-	width = 0.3, -- Width of the Window (percentage of the screen)
+	width = 0.35, -- Width of the Window (percentage of the screen)
 	height = 0.8, -- Height of the Window (percentage of the screen)
 	vertical_padding = 3, -- Amount of padded lines (Vertical)
 	horizontal_padding = 6, -- Amount of padded characters (Horizontal)
@@ -61,7 +61,6 @@ function M.toggle()
 		vim.api.nvim_win_close(bg_win, true)
 		win = nil
 		bg_win = nil
-		-- buf = nil
 		return
 	end
 

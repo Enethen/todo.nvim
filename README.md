@@ -1,4 +1,4 @@
-# ✅ Todo.nvim ✅
+# 󰄬  Todo.nvim
 
 **Todo.nvim** helps you keep focused on what matters by quickly toggling and typing TODOs inside a togglable scratch buffer.
 
@@ -11,6 +11,10 @@
 - **Indent**: Press `<Tab>`(n) and `<S-Tab>`(n) to easily indent the todos
 - **Layout**: Nice looking floating window with padding
 - **Resize**: Window automatically resize along with Neovim
+
+## 🎥 Demo
+
+![Todo.nvim demo](media/todo.nvim-demo.gif)
 
 ## ⚡️ Requirements
 
@@ -67,7 +71,7 @@ local defaults = {
 
 ## Acknoledgement
 
-This is my first Neovim plugin, which I made thanks to [Teej](https://www.youtube.com/@teej_dv)'s [tutorials](https://www.youtube.com/watch?v=VGid4aN25iI&list=PLep05UYkc6wTyBe7kPjQFWVXTlhKeQejM&index=19) and following [Folke](https://github.com/folke)'s awesome READMEs formatting 😊
+This is my first Neovim plugin, which I made thanks to [Teej](https://www.youtube.com/@teej_dv)'s [tutorials](https://www.youtube.com/watch?v=VGid4aN25iI&list=PLep05UYkc6wTyBe7kPjQFWVXTlhKeQejM&index=19) and following [Folke](https://github.com/folke)'s awesome READMEs formatting and plugin's structure 😊
 
 The idea came from this [video](https://www.youtube.com/watch?v=LaIa1tQFOSY) from Coding With Sphere.
 Since I did not find such a plugin, I decided to give it a shot!
