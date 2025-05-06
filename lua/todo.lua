@@ -1,6 +1,45 @@
 local M = {}
 
+local first_time = true
 local buf, win, bg_buf, bg_win
+
+local function draw_windows(config)
+	config = config or {}
+	local width = config.width or math.floor(vim.o.columns * 0.3)
+	local height = config.height or math.floor(vim.o.lines * 0.8)
+	local row = config.row or math.floor((vim.o.lines - height) / 2)
+	local col = config.col or math.floor((vim.o.columns - width) / 2)
+
+	bg_win = vim.api.nvim_open_win(bg_buf, false, {
+		relative = "editor",
+		width = width,
+		height = height,
+		border = "rounded",
+		style = "minimal",
+		row = row,
+		col = col,
+	})
+
+	local Vpadding = 3
+	local Hpadding = 6
+	win = vim.api.nvim_open_win(buf, true, {
+		relative = "editor",
+		width = width - (Hpadding * 2),
+		height = height - (Vpadding * 2),
+		row = row + Vpadding,
+		col = col + Hpadding,
+		style = "minimal",
+		border = "none",
+	})
+
+	vim.wo[win].number = false
+	vim.wo[win].relativenumber = false
+	vim.wo[win].wrap = true
+	vim.wo[win].spell = true
+
+	vim.wo[bg_win].number = false
+	vim.wo[bg_win].relativenumber = false
+end
 
 function M.toggle()
 	if win and buf and vim.api.nvim_win_is_valid(win) then
@@ -12,7 +51,6 @@ function M.toggle()
 		return
 	end
 
-	local first_time = false
 	if not buf then
 		first_time = true
 
@@ -54,43 +92,12 @@ function M.toggle()
 		vim.keymap.set("n", "O", "O- [ ] ", keymap_opts)
 	end
 
-	local width = math.floor(vim.o.columns * 0.3)
-	local height = math.floor(vim.o.lines * 0.8)
-	local row = math.floor((vim.o.lines - height) / 2)
-	local col = math.floor((vim.o.columns - width) / 2)
-
-	bg_win = vim.api.nvim_open_win(bg_buf, false, {
-		relative = "editor",
-		width = width,
-		height = height,
-		border = "rounded",
-		style = "minimal",
-		row = row,
-		col = col,
-	})
-	local Vpadding = 3
-	local Hpadding = 6
-	win = vim.api.nvim_open_win(buf, true, {
-		relative = "editor",
-		width = width - (Hpadding * 2),
-		height = height - (Vpadding * 2),
-		row = row + Vpadding,
-		col = col + Hpadding,
-		style = "minimal",
-		border = "none",
-	})
-
-	vim.wo[win].number = false
-	vim.wo[win].relativenumber = false
-	vim.wo[win].wrap = true
-	vim.wo[win].spell = true
-
-	vim.wo[bg_win].number = false
-	vim.wo[bg_win].relativenumber = false
+	draw_windows()
 
 	if first_time then
 		-- Go to end of buffer and delete last empty line then go into insert mode
 		vim.api.nvim_feedkeys("GVxA", "n", true)
+		first_time = false
 	end
 end
 
@@ -109,9 +116,20 @@ function M.toggle_checkbox()
 	vim.api.nvim_buf_set_lines(0, row - 1, row, false, { line })
 end
 
-function M.setup(opts)
+function M.setup()
 	vim.keymap.set("n", "<leader>t", M.toggle, { desc = "Toggle Scratch Todo Window" })
 	vim.api.nvim_create_user_command("ScratchTodo", M.toggle, {})
+
+	vim.api.nvim_create_autocmd("VimResized", {
+		group = vim.api.nvim_create_augroup("Todo.nvim-resized", {}),
+		callback = function()
+			if not vim.api.nvim_win_is_valid(win) or win == nil then
+				return
+			end
+			M.toggle()
+			M.toggle()
+		end,
+	})
 end
 
 return M
