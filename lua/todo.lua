@@ -91,7 +91,7 @@ function M.toggle()
 		-- Auto-insert '- [ ] ' on new lines
 		vim.keymap.set("i", "<Enter>", "<Enter>- [ ] ", keymap_opts)
 		vim.keymap.set("n", "o", "o- [ ] ", keymap_opts)
-		vim.keymap.set("n", "O", "O- [ ] ", keymap_opts)
+		-- vim.keymap.set("n", "O", "O- [ ] ", keymap_opts) -- This does not feel good
 	end
 
 	draw_windows()
@@ -125,7 +125,7 @@ function M.setup()
 	vim.api.nvim_create_autocmd("VimResized", {
 		group = vim.api.nvim_create_augroup("Todo.nvim-resized", {}),
 		callback = function()
-			if not vim.api.nvim_win_is_valid(win) or win == nil then
+			if win == nil or not vim.api.nvim_win_is_valid(win) then
 				return
 			end
 			M.toggle()
