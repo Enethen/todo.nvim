@@ -74,6 +74,8 @@ function M.toggle()
 		local keymap_opts = { buffer = buf, silent = true }
 		-- "q" to close floating window
 		vim.keymap.set("n", "q", M.toggle, keymap_opts)
+		vim.keymap.set("n", "<Esc>", M.toggle, keymap_opts)
+		vim.keymap.set("n", "<C-c>", M.toggle, keymap_opts)
 
 		-- C-I does nothing,C-O closes the buffer instead of jumping
 		vim.keymap.set("n", "<C-o>", M.toggle, keymap_opts)
