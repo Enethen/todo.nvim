@@ -7,7 +7,7 @@
 - **Tick**: Press `<CR>` when in Normal mode to tick/untick the current line's todo
 - **Easy Checkboxes**: `<CR>` and `o` will all prepend the `- [ ]` prefix automatically
 - **Open**: Press `<leader>t` to open the todo-list
-- **Exit**: Press `<leader>t`, `<C-o>` or `<C-c>` to close the window
+- **Exit**: Press `q`, `<leader>t`, `<C-o>` or `<C-c>` to close the window
 - **Indent**: Press `<Tab>`(n) and `<S-Tab>`(n) to easily indent the todos
 - **Layout**: Nice looking floating window with padding
 - **Resize**: Window automatically resize along with Neovim
@@ -22,23 +22,45 @@
 
 Install the plugin using your favorite package manager:
 
-### [lazy.nvim](https://github.com/folke/lazy.nvim)
+[lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
 {
   "Enethen/todo.nvim",
   event = "VeryLazy",
-  -- opts = { }
+  -- dependencies = { "MeanderingProgrammer/render-markdown.nvim" } -- For better markdown rendering
+  opts = {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  },
 }
 ```
 
 ## ⚙️ Configuration
 
-Not yet implemented. Please let me know if you'd like anything to be configurable!
+```lua
+local defaults = {
+    development_logs = false, -- 
+    width = 0.3, -- Width of the Window (percentage of the screen)
+    height = 0.8, -- Height of the Window (percentage of the screen)
+    vertical_padding = 3, -- Amount of padded lines (Vertical)
+    horizontal_padding = 6, -- Amount of padded characters (Horizontal)
+    border = "rounded", -- Border style, see h: nvim_open_win
+    style = "minimal", -- Style of the window, see h: nvim_open_win
+    default_text = function() -- The default upon opening the window for the first time
+        local lines = {
+            "# TODO List",
+            "",
+            "- [ ] Item1",
+        }
+        return lines
+    end,
+}
+```
 
 ## TODOs Features
 
-- [ ] Add config `opts` to `require("todo").setup()`
 - [ ] Saving todo lists
   - [ ] Configurable `global`, `project` and `scratch-only` options for saving behaviours.
   - [ ] Easy todo-lists retrieving via fuzzy pickers (telescope, fzf or Snacks)
