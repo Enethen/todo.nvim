@@ -1,4 +1,4 @@
-# 󰄬  Todo.nvim
+# ✔️  Todo.nvim
 
 **Todo.nvim** helps you keep focused on what matters by quickly toggling and typing TODOs inside a togglable scratch buffer.
 
