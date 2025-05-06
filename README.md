@@ -1,16 +1,16 @@
-# ✅ Todo.nvim
+# ✅ Todo.nvim ✅
 
 **Todo.nvim** helps you keep focused on what matters by quickly toggling and typing TODOs inside a togglable scratch buffer.
 
 ## ✨ Features
 
-- [x] **Tick**: Press `<CR>` when in Normal mode to tick/untick the current line's todo
-- [x] **Easy Checkboxes**: `<CR>`(i), `o`(n) and `O`(n) will all prepend the `- [ ]` prefix automatically
-- [x] **Toggle**: Press `<leader>t` to open/close the todo-list
-- [x] **Exit**: Press `q`, `<C-o>`, `<C-c>` or `<Esc>` to close the floating window
-- [x] **Indent**: Press `<Tab>`(n) and `<S-Tab>`(n) to easily indent the todos
-- [x] **Layout**: Nice looking floating window with padding
-- [x] **Resize**: Window automatically resize along with Neovim
+- **Tick**: Press `<CR>` when in Normal mode to tick/untick the current line's todo
+- **Easy Checkboxes**: `<CR>` and `o` will all prepend the `- [ ]` prefix automatically
+- **Open**: Press `<leader>t` to open the todo-list
+- **Exit**: Press `<leader>t`, `<C-o>` or `<C-c>` to close the window
+- **Indent**: Press `<Tab>`(n) and `<S-Tab>`(n) to easily indent the todos
+- **Layout**: Nice looking floating window with padding
+- **Resize**: Window automatically resize along with Neovim
 
 ## ⚡️ Requirements
 
