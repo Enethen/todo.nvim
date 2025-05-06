@@ -1,16 +1,22 @@
 local M = {}
 
-local buf, win
+local buf, win, bg_buf, bg_win
 
 function M.toggle()
 	if win and buf and vim.api.nvim_win_is_valid(win) then
 		vim.api.nvim_win_close(win, true)
+		vim.api.nvim_win_close(bg_win, true)
 		win = nil
+		bg_win = nil
 		-- buf = nil
 		return
 	end
 
+	local first_time = false
 	if not buf then
+		first_time = true
+
+		bg_buf = vim.api.nvim_create_buf(false, true)
 		buf = vim.api.nvim_create_buf(false, true) -- [listed = false], [scratch = true]
 		vim.bo[buf].shiftwidth = 2 -- Set indent width
 		vim.bo[buf].tabstop = 2 -- How many spaces a tab counts for
@@ -26,6 +32,26 @@ function M.toggle()
 			"- [ ] Item1",
 		}
 		vim.api.nvim_buf_set_lines(buf, 0, 0, false, lines)
+
+		local keymap_opts = { buffer = buf, silent = true }
+		-- "q" to close floating window
+		vim.keymap.set("n", "q", M.toggle, keymap_opts)
+
+		-- C-I does nothing,C-O closes the buffer instead of jumping
+		vim.keymap.set("n", "<C-o>", M.toggle, keymap_opts)
+		vim.keymap.set("n", "<C-i>", "<Nop>", keymap_opts)
+
+		-- Enter to toggle the todo
+		vim.keymap.set("n", "<CR>", M.toggle_checkbox, keymap_opts)
+
+		-- Tab and Shift-Tab to indent lines
+		vim.keymap.set("n", "<Tab>", "V><Esc>", keymap_opts)
+		vim.keymap.set("n", "<S-Tab>", "V<<Esc>", keymap_opts)
+
+		-- Auto-insert '- [ ] ' on new lines
+		vim.keymap.set("i", "<Enter>", "<Enter>- [ ] ", keymap_opts)
+		vim.keymap.set("n", "o", "o- [ ] ", keymap_opts)
+		vim.keymap.set("n", "O", "O- [ ] ", keymap_opts)
 	end
 
 	local width = math.floor(vim.o.columns * 0.3)
@@ -33,14 +59,25 @@ function M.toggle()
 	local row = math.floor((vim.o.lines - height) / 2)
 	local col = math.floor((vim.o.columns - width) / 2)
 
-	win = vim.api.nvim_open_win(buf, true, {
+	bg_win = vim.api.nvim_open_win(bg_buf, false, {
 		relative = "editor",
 		width = width,
 		height = height,
+		border = "rounded",
+		style = "minimal",
 		row = row,
 		col = col,
+	})
+	local Vpadding = 3
+	local Hpadding = 6
+	win = vim.api.nvim_open_win(buf, true, {
+		relative = "editor",
+		width = width - (Hpadding * 2),
+		height = height - (Vpadding * 2),
+		row = row + Vpadding,
+		col = col + Hpadding,
 		style = "minimal",
-		border = "rounded",
+		border = "none",
 	})
 
 	vim.wo[win].number = false
@@ -48,25 +85,13 @@ function M.toggle()
 	vim.wo[win].wrap = true
 	vim.wo[win].spell = true
 
-	local keymap_opts = { buffer = buf, silent = true }
-	-- "q" to close floating window
-	vim.keymap.set("n", "q", M.toggle, keymap_opts)
+	vim.wo[bg_win].number = false
+	vim.wo[bg_win].relativenumber = false
 
-	-- Ignore C-I and C-O
-	vim.keymap.set("n", "<C-o>", "<Nop>", keymap_opts)
-	vim.keymap.set("n", "<C-i>", "<Nop>", keymap_opts)
-
-	-- Enter to toggle the todo
-	vim.keymap.set("n", "<CR>", M.toggle_checkbox, keymap_opts)
-
-	-- Tab and Shift-Tab to indent lines
-	vim.keymap.set("n", "<Tab>", "V><Esc>", keymap_opts)
-	vim.keymap.set("n", "<S-Tab>", "V<<Esc>", keymap_opts)
-
-	-- Auto-insert '- [ ] ' on new lines
-	vim.keymap.set("i", "<Enter>", "<Enter>- [ ] ", keymap_opts)
-	vim.keymap.set("n", "o", "o- [ ] ", keymap_opts)
-	vim.keymap.set("n", "O", "O- [ ] ", keymap_opts)
+	if first_time then
+		-- Go to end of buffer and delete last empty line then go into insert mode
+		vim.api.nvim_feedkeys("GVxA", "n", true)
+	end
 end
 
 function M.toggle_checkbox()
