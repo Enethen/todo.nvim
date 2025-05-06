@@ -20,7 +20,7 @@
 
 - Neovim >= 0.10.0
 - for better markdown rendering _(optional)_:
-  - [render-markdown](MeanderingProgrammer/render-markdown.nvim)
+  - [render-markdown](https://github.com/MeanderingProgrammer/render-markdown.nvim)
 
 ## 📦 Installation
 
