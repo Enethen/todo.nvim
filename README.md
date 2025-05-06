@@ -31,8 +31,18 @@ Install the plugin using your favorite package manager:
 ```lua
 {
   "Enethen/todo.nvim",
-  event = "VeryLazy",
-  -- dependencies = { "MeanderingProgrammer/render-markdown.nvim" } -- For better markdown rendering
+  keys = {
+    {
+      "<leader>t",
+      function()
+        require("todo").toggle()
+      end,
+      desc = "Toggles Todo-List",
+    },
+  },
+  dependencies = {
+    -- "MeanderingProgrammer/render-markdown.nvim" -- For better markdown rendering
+  },
   opts = {
     -- your configuration comes here
     -- or leave it empty to use the default settings
@@ -44,22 +54,23 @@ Install the plugin using your favorite package manager:
 ## ⚙️ Configuration
 
 ```lua
-local defaults = {
-    development_logs = false, -- 
-    width = 0.3, -- Width of the Window (percentage of the screen)
-    height = 0.8, -- Height of the Window (percentage of the screen)
-    vertical_padding = 3, -- Amount of padded lines (Vertical)
-    horizontal_padding = 6, -- Amount of padded characters (Horizontal)
-    border = "rounded", -- Border style, see h: nvim_open_win
-    style = "minimal", -- Style of the window, see h: nvim_open_win
-    default_text = function() -- The default upon opening the window for the first time
-        local lines = {
-            "# TODO List",
-            "",
-            "- [ ] Item1",
-        }
-        return lines
+{
+  opts = {
+    width = 0.35, -- width of the window (percentage of the screen)
+    height = 0.8, -- height of the window (percentage of the screen)
+    vertical_padding = 3, -- amount of padded lines (vertical)
+    horizontal_padding = 6, -- amount of padded characters (horizontal)
+    border = "rounded", -- border style, see h: nvim_open_win
+    style = "minimal", -- style of the window, see h: nvim_open_win
+    default_text = function() -- the default text upon opening the window for the first time
+      local lines = {
+      "# todo list",
+      "",
+      "- [ ] item1",
+      }
+      return lines
     end,
+  }
 }
 ```
 

@@ -4,14 +4,14 @@ local first_time = true
 local buf, win, bg_buf, bg_win
 
 local defaults = {
-	development_logs = false, --
+	development_logs = false,
 	width = 0.35, -- Width of the Window (percentage of the screen)
 	height = 0.8, -- Height of the Window (percentage of the screen)
 	vertical_padding = 3, -- Amount of padded lines (Vertical)
 	horizontal_padding = 6, -- Amount of padded characters (Horizontal)
 	border = "rounded", -- Border style, see h: nvim_open_win
 	style = "minimal", -- Style of the window, see h: nvim_open_win
-	default_text = function() -- The default upon opening the window for the first time
+	default_text = function() -- The default text upon opening the window for the first time
 		local lines = {
 			"# TODO List",
 			"",
@@ -120,9 +120,9 @@ function M.toggle_checkbox()
 	end
 
 	if line:find("%- %[ %] ") then
-		line = line:gsub("%- %[ %] ", "- [x] ")
-	elseif line:find("%- %[x%] ") then
-		line = line:gsub("%- %[x%] ", "- [ ] ")
+		line = line:gsub("%- %[ %] ", "- [X] ")
+	elseif line:find("%- %[[X|x]%] ") then
+		line = line:gsub("%- %[[X|x]%] ", "- [ ] ")
 	end
 	vim.api.nvim_buf_set_lines(0, row - 1, row, false, { line })
 end
