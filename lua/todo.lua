@@ -107,7 +107,7 @@ function M.toggle()
 
 	if first_time then
 		-- Go to end of buffer and delete last empty line then go into insert mode
-		vim.api.nvim_feedkeys("GVxA", "n", true)
+		vim.api.nvim_feedkeys("GVx$", "n", true)
 		first_time = false
 	end
 end
