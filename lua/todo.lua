@@ -1,11 +1,11 @@
 local M = {}
 
 local state = {
-	first_time = true,
 	buf = nil,
 	win = nil,
 	bg_buf = nil,
 	bg_win = nil,
+	window_opened = false,
 }
 
 M._log = function(message)
@@ -51,6 +51,9 @@ local defaults = {
 		}
 		return lines
 	end,
+	todo_picker = function(cwd)
+		require("snacks").picker.files({ cwd = cwd, pattern = "*.md" })
+	end,
 }
 
 ---@type TodoNvim.Config
@@ -59,7 +62,7 @@ M.defaults = vim.deepcopy(defaults)
 ---@type TodoNvim.Config
 M.config = vim.deepcopy(defaults)
 
-local function draw_windows()
+local function open_windows()
 	local width = math.floor(vim.o.columns * M.config.width)
 	local height = math.floor(vim.o.lines * M.config.height)
 	local row = math.floor((vim.o.lines - height) / 2)
@@ -74,6 +77,7 @@ local function draw_windows()
 		row = row,
 		col = col,
 	})
+	M._log("bg_win was set to: " .. state.bg_win)
 
 	local Vpadding = M.config.vertical_padding
 	local Hpadding = M.config.horizontal_padding
@@ -90,28 +94,51 @@ local function draw_windows()
 	vim.wo[state.win].signcolumn = "no" -- Avoid showing lsp symbols (warnings)
 	vim.wo[state.win].wrap = true
 	vim.wo[state.win].spell = true
+
+	state.window_opened = true
+end
+
+function M.close_windows()
+	M._log("Closing windows") --: bg_win=" .. tostring(state.bg_win) .. " | win=" .. tostring(state.win))
+	if vim.api.nvim_win_is_valid(state.bg_win) then
+		vim.api.nvim_win_close(state.bg_win, true)
+	end
+	if vim.api.nvim_win_is_valid(state.win) then
+		vim.api.nvim_win_close(state.win, true)
+	end
+	-- local ok, error = pcall(vim.api.nvim_win_close, state.bg_win, true)
+	-- if not ok then
+	-- end
+	-- M._log("Error! bg_win=" .. tostring(state.bg_win) .. "\nErrormsg:\n" .. error)
+	state.win = nil
+	state.bg_win = nil
+	state.window_opened = false
+end
+
+function M.is_opened()
+	local opened = state.window_opened and state.win and state.buf and vim.api.nvim_win_is_valid(state.win) or false
+	M._log("Is opened? " .. tostring(opened))
+	return opened
 end
 
 function M.toggle()
-	if state.win and state.buf and vim.api.nvim_win_is_valid(state.win) then
-		vim.api.nvim_win_close(state.win, true)
-		vim.api.nvim_win_close(state.bg_win, true)
-		state.win = nil
-		state.bg_win = nil
+	M._log("M.toggle() : IsOpened being called.")
+	if M.is_opened() then
+		M.close_windows()
 		return
 	end
 
+	local buffers_just_created = false
 	if not state.buf then
-		state.first_time = true
 		M._create_buffers()
+		buffers_just_created = true
 	end
 
-	draw_windows()
+	open_windows()
 
-	if state.first_time then
-		-- Go to end of buffer and delete last empty line then go into insert mode
+	if buffers_just_created then
+		-- Go to end of buffer and delete last empty line
 		vim.api.nvim_feedkeys("GVx$", "n", true)
-		state.first_time = false
 	end
 end
 
@@ -141,11 +168,23 @@ function M.setup(opts)
 	vim.api.nvim_create_autocmd("VimResized", {
 		group = vim.api.nvim_create_augroup("Todo.nvim-resized", {}),
 		callback = function()
-			if state.win == nil or not vim.api.nvim_win_is_valid(state.win) then
+			M._log("VimResized callback")
+			if not M.is_opened() then
 				return
 			end
 			M.toggle()
 			M.toggle()
+		end,
+	})
+
+	-- Auto-close when the window loses focus
+	vim.api.nvim_create_autocmd("WinLeave", {
+		buffer = state.buf,
+		callback = function()
+			M._log("WinLeave callback")
+			if M.is_opened() then
+				M.close_windows()
+			end
 		end,
 	})
 
