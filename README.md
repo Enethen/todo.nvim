@@ -1,16 +1,23 @@
 # ✔️  Todo.nvim
 
-**Todo.nvim** helps you keep focused on what matters by quickly toggling and typing TODOs inside a togglable scratch buffer.
+**Todo.nvim** helps you keep focused on what matters by quickly typing and ticking **TODOs** inside an accessible floating window.
 
-## ✨ Features
+The aim of this plugin is to emulate a convenient, accessible and visually sober todo-list without distractions.
 
-- **Tick**: Press `<CR>` when in Normal mode to tick/untick the current line's todo
-- **Easy Checkboxes**: `<CR>` and `o` will all prepend the `- [ ]` prefix automatically
-- **Open**: Press `<leader>t` to open the todo-list
-- **Exit**: Press `q`, `<leader>t`, `<C-o>` or `<C-c>` to close the window
-- **Indent**: Press `<Tab>`(n) and `<S-Tab>`(n) to easily indent the todos
-- **Layout**: Nice looking floating window with padding
-- **Resize**: Window automatically resize along with Neovim
+> It's like paper but digital.
+
+## ✨ Features and Usage
+
+- **✔️ Tick**: Press `<CR>` when in _normal_ mode to tick or untick the current line's todo
+- **⌨️ Quick Typing**: `<CR>` and `o` will both prepend the `- [ ]` prefix automatically
+- **🚪 Open**: Press `<leader>t` to open or close the todo-list
+- **🔥 Exit**: Press `q`, `<leader>t`, `<C-o>` or `<C-c>` to close the window.
+
+- **➡️ Indent**: Press `<Tab>` and `<S-Tab>` to easily indent in _normal_ and _visual_ mode
+- **🔳 Minimalist Design**: Clean looking floating window with padding and disabled diagnostics
+- **💾 Save/Select**: Save your todo-lists to a configurable folder. Selects an existing todo-list with `TodoSelectCurrentBuffer`.
+- **🚫 Not lingering**: The floating window will automatically close upon losing focus.
+- **🔼 Resize**: Window automatically resize along with Neovim
 
 ## 🎥 Demo
 
@@ -30,26 +37,25 @@ Install the plugin using your favorite package manager:
 
 ```lua
 {
-  "Enethen/todo.nvim",
-  keys = {
-    {
-      "<leader>t",
-      function()
-        require("todo").toggle()
-      end,
-      desc = "Toggles Todo-List",
+    "Enethen/todo.nvim",
+    dependencies = {
+        -- "MeanderingProgrammer/render-markdown.nvim" -- For better markdown rendering
     },
-  },
-  dependencies = {
-    -- "MeanderingProgrammer/render-markdown.nvim" -- For better markdown rendering
-  },
-  opts =
-  ---@type TodoNvim.Config 
-  {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-  },
+    opts =
+    ---@module "todo.config"
+    ---@type TodoNvim.Config
+    {
+        -- your configuration comes here
+        -- or leave it empty to use the default settings
+        -- refer to the configuration section below
+    },
+    cmd = {
+        "TodoToggle",
+        "TodoSelectCurrentBuffer",
+    },
+    keys = {
+        { "<leader>t", function() require("todo").toggle() end, desc = "Toggles Todo-List" },
+    },
 }
 ```
 
@@ -91,18 +97,14 @@ local defaults = {
 }
 ```
 
-## TODOs Features
+## ⚡ Feature Ideas
 
-- [ ] Saving todo lists
-  - [ ] Configurable `global`, `project` and `scratch-only` options for saving behaviours.
-  - [ ] Configurable save path, [save_path = "example"] leader to `example/`, `./example` respectively.
-  - [ ] Easy todo-lists retrieving via fuzzy pickers (telescope, fzf or Snacks)
-  - [ ] Create autocommands: `TodoNew`, `TodoOpen` (defaultin to most recent)
-  - [ ] Dev todolist fecthin based on `save_path`.
+- [ ] Famous pickers (telescope, fzf or Snacks) integration for opening saved todo-lists
 
-## Acknoledgement
+## 🙏 Acknoledgement
 
-This is my first Neovim plugin, which I made thanks to [Teej](https://www.youtube.com/@teej_dv)'s [tutorials](https://www.youtube.com/watch?v=VGid4aN25iI&list=PLep05UYkc6wTyBe7kPjQFWVXTlhKeQejM&index=19) and following [Folke](https://github.com/folke)'s awesome READMEs formatting and plugin's structure 😊
+This is my first Neovim plugin, which I made thanks to [Teej](https://www.youtube.com/@teej_dv)'s [tutorials](https://www.youtube.com/watch?v=VGid4aN25iI&list=PLep05UYkc6wTyBe7kPjQFWVXTlhKeQejM&index=19) and following [Folke](https://github.com/folke)'s awesome `README` formatting and plugin's structure 😊
 
-The idea came from this [video](https://www.youtube.com/watch?v=LaIa1tQFOSY) from Coding With Sphere.
+The idea originally came from this [video](https://www.youtube.com/watch?v=LaIa1tQFOSY) from Coding With Sphere.
+
 Since I did not find such a plugin, I decided to give it a shot!
