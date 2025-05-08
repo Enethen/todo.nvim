@@ -14,53 +14,11 @@ M._log = function(message)
 	end
 end
 
-M._default_name = function()
-	return "TodoList_" .. os.date("%y-%m-%d_%H-%M")
-end
-
----@class TodoNvim.Config
----@field disable_diagnostics boolean
----@field document_name string | fun(): string
----@field save_path string
----@field buffer_listed boolean
----@field development_logs boolean
----@field width number
----@field height number
----@field vertical_padding number
----@field horizontal_padding number
----@field border string
----@field style string
----@field default_text fun(): string[]
-local defaults = {
-	disable_diagnostics = true, -- disables diagnostics of markdown LSP/Linters
-	document_name = M._default_name, -- can be either a string or a function
-	save_path = "todo-lists/", -- Path to the saving folder, relative to the CWD
-	buffer_listed = true, -- should the Todo-list buffer be listed? see :h buflisted
-	development_logs = false,
-	width = 0.35, -- Width of the Window (percentage of the screen)
-	height = 0.8, -- Height of the Window (percentage of the screen)
-	vertical_padding = 3, -- Amount of padded lines (Vertical)
-	horizontal_padding = 6, -- Amount of padded characters (Horizontal)
-	border = "rounded", -- Border style, see h: nvim_open_win
-	style = "minimal", -- Style of the window, see h: nvim_open_win
-	default_text = function() -- The default text upon opening the window for the first time
-		local lines = {
-			"# TODO List",
-			"",
-			"- [ ] Item1",
-		}
-		return lines
-	end,
-	todo_picker = function(cwd)
-		require("snacks").picker.files({ cwd = cwd, pattern = "*.md" })
-	end,
-}
+---@type TodoNvim.Config
+M.defaults = vim.deepcopy(require("config").defaults)
 
 ---@type TodoNvim.Config
-M.defaults = vim.deepcopy(defaults)
-
----@type TodoNvim.Config
-M.config = vim.deepcopy(defaults)
+M.config = vim.deepcopy(M.defaults)
 
 local function open_windows()
 	local width = math.floor(vim.o.columns * M.config.width)
@@ -160,7 +118,7 @@ end
 ---@param opts TodoNvim.Config
 function M.setup(opts)
 	opts = opts or {}
-	M.config = vim.tbl_extend("force", vim.deepcopy(defaults), opts)
+	M.config = vim.tbl_extend("force", vim.deepcopy(M.defaults), opts)
 
 	vim.keymap.set("n", "<leader>t", M.toggle, { desc = "Toggle Scratch Todo Window" })
 	vim.api.nvim_create_user_command("ScratchTodo", M.toggle, {})
@@ -198,7 +156,6 @@ M._create_buffers = function()
 	local config_name_type = type(M.config.document_name)
 	local name = config_name_type == "function" and M.config.document_name()
 		or config_name_type == "string" and M.config.document_name
-		or M._default_name()
 	local path = M.config.save_path or ""
 	if not path.match(path, "/$") and path ~= "" then
 		path = path .. "/"
