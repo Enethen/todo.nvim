@@ -78,7 +78,10 @@ Install the plugin using your favorite package manager:
 
 - [ ] Saving todo lists
   - [ ] Configurable `global`, `project` and `scratch-only` options for saving behaviours.
+  - [ ] Configurable save path, [save_path = "example"] leader to `example/`, `./example` respectively.
   - [ ] Easy todo-lists retrieving via fuzzy pickers (telescope, fzf or Snacks)
+  - [ ] Create autocommands: `TodoNew`, `TodoOpen` (defaultin to most recent)
+  - [ ] Dev todolist fecthin based on `save_path`.
 
 ## Acknoledgement
 
