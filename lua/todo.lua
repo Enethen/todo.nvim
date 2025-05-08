@@ -183,8 +183,9 @@ M._select_buffer = function(bufnr)
 		vim.diagnostic.enable(false, { bufnr = bufnr })
 	end
 
-	vim.bo[bufnr].shiftwidth = 2 -- Set indent width
-	vim.bo[bufnr].tabstop = 2 -- How many spaces a tab counts for
+	vim.bo[bufnr].shiftwidth = 2
+	vim.bo[bufnr].tabstop = 2
+	vim.bo[bufnr].softtabstop = 2
 	vim.bo[bufnr].expandtab = true -- Use spaces instead of tabs
 	vim.bo[bufnr].filetype = "markdown"
 	vim.bo[bufnr].bufhidden = M.config.buffer_listed and nil or "hide"
