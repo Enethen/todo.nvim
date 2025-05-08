@@ -123,7 +123,7 @@ end
 
 function M.toggle()
 	M._log("M.toggle() : IsOpened being called.")
-	if M.is_opened() then
+	if M.is_opened() == true then
 		M.close_windows()
 		return
 	end
@@ -192,41 +192,47 @@ function M.setup(opts)
 end
 
 M._create_buffers = function()
-	state.bg_buf = vim.api.nvim_create_buf(false, true) -- [listed], [scratch]
 	state.buf = vim.api.nvim_create_buf(M.config.buffer_listed, false)
 
+	-- Setting name and path
 	local config_name_type = type(M.config.document_name)
 	local name = config_name_type == "function" and M.config.document_name()
 		or config_name_type == "string" and M.config.document_name
 		or M._default_name()
-
 	local path = M.config.save_path or ""
 	if not path.match(path, "/$") and path ~= "" then
 		path = path .. "/"
 	end
 	name = path .. name .. ".md"
-
-	if M.config.disable_diagnostics == true then
-		M._log("disable_diagnostics = true")
-		vim.diagnostic.enable(false, { bufnr = state.buf })
-	end
-
 	vim.api.nvim_buf_set_name(state.buf, name)
-	vim.b[state.buf]._is_todo_buffer = true -- Set custom data to recognize this buffer later
-	vim.bo[state.buf].shiftwidth = 2 -- Set indent width
-	vim.bo[state.buf].tabstop = 2 -- How many spaces a tab counts for
-	vim.bo[state.buf].expandtab = true -- Use spaces instead of tabs
-	vim.bo[state.buf].filetype = "markdown"
-	-- vim.bo[state.buf].buftype = "nofile"
-	vim.bo[state.buf].bufhidden = M.config.buffer_listed and nil or "hide"
-	vim.bo[state.buf].swapfile = false
 
-	vim.api.nvim_set_option_value("modifiable", true, { buf = state.buf })
-
+	-- Setting default_text
 	local lines = M.config.default_text()
 	vim.api.nvim_buf_set_lines(state.buf, 0, 0, false, lines)
 
-	M._set_buffer_keymaps(state.buf)
+	M._select_buffer(state.buf)
+end
+
+M._select_buffer = function(bufnr)
+	-- Make sure to create an empty scratch buffer for the BG if not existing
+	if state.bg_buf == nil then
+		state.bg_buf = vim.api.nvim_create_buf(false, true) -- [listed], [scratch]
+	end
+
+	state.buf = bufnr
+	-- Removing diagnostics
+	if M.config.disable_diagnostics == true then
+		M._log("disable_diagnostics = true")
+		vim.diagnostic.enable(false, { bufnr = bufnr })
+	end
+
+	vim.bo[bufnr].shiftwidth = 2 -- Set indent width
+	vim.bo[bufnr].tabstop = 2 -- How many spaces a tab counts for
+	vim.bo[bufnr].expandtab = true -- Use spaces instead of tabs
+	vim.bo[bufnr].filetype = "markdown"
+	vim.bo[bufnr].bufhidden = M.config.buffer_listed and nil or "hide"
+
+	M._set_buffer_keymaps(bufnr)
 end
 
 M._set_buffer_keymaps = function(bufnr)
@@ -253,6 +259,15 @@ M._set_buffer_keymaps = function(bufnr)
 	vim.keymap.set("i", "<Enter>", "<Enter>- [ ] ", keymap_opts)
 	vim.keymap.set("n", "o", "o- [ ] ", keymap_opts)
 	-- vim.keymap.set("n", "O", "O- [ ] ", keymap_opts) -- This does not feel good
+end
+
+M.select_current_buffer = function()
+	if M.is_opened() then
+		vim.notify("Cannot be executed while the Todo-list is opened.", vim.log.levels.WARN)
+	end
+
+	M._select_buffer(vim.api.nvim_get_current_buf())
+	M.toggle()
 end
 
 return M
