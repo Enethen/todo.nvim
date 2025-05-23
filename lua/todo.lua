@@ -15,7 +15,7 @@ M._log = function(message)
 end
 
 ---@type TodoNvim.Config
-M.defaults = vim.deepcopy(require("config").defaults)
+M.defaults = vim.deepcopy(require("todo.config").defaults)
 
 ---@type TodoNvim.Config
 M.config = vim.deepcopy(M.defaults)
@@ -121,7 +121,6 @@ function M.setup(opts)
 	M.config = vim.tbl_extend("force", vim.deepcopy(M.defaults), opts)
 
 	vim.keymap.set("n", "<leader>t", M.toggle, { desc = "Toggle Scratch Todo Window" })
-	vim.api.nvim_create_user_command("ScratchTodo", M.toggle, {})
 
 	vim.api.nvim_create_autocmd("VimResized", {
 		group = vim.api.nvim_create_augroup("Todo.nvim-resized", {}),
@@ -154,8 +153,8 @@ M._create_buffers = function()
 
 	-- Setting name and path
 	local config_name_type = type(M.config.document_name)
-	local name = config_name_type == "function" and M.config.document_name()
-		or config_name_type == "string" and M.config.document_name
+	local name = (config_name_type == "function" and M.config.document_name())
+		or (config_name_type == "string" and M.config.document_name)
 	local path = M.config.save_path or ""
 	if not path.match(path, "/$") and path ~= "" then
 		path = path .. "/"
