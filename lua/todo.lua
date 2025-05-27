@@ -134,8 +134,20 @@ function M.setup(opts)
 		end,
 	})
 
-	-- Auto-close when the window loses focus
+	-- Auto-close when the window loses focus or navigating to other buffer
+	vim.api.nvim_create_autocmd("BufLeave", {
+		group = vim.api.nvim_create_augroup("TodoNvim_BufLeave", { clear = true }),
+		buffer = state.buf,
+		callback = function()
+			M._log("BufLeave callback")
+			if M.is_opened() then
+				M.close_windows()
+			end
+		end,
+	})
+
 	vim.api.nvim_create_autocmd("WinLeave", {
+		group = vim.api.nvim_create_augroup("TodoNvim_WinLeave", { clear = true }),
 		buffer = state.buf,
 		callback = function()
 			M._log("WinLeave callback")

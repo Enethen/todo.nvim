@@ -49,10 +49,6 @@ M.defaults = {
 		{ mode = "n", lhs = "q", rhs = "<CMD>TodoToggle<CR>", desc = "Todo: Closes floating Window" },
 		{ mode = "n", lhs = "<C-c>", rhs = "<CMD>TodoToggle<CR>", desc = "Todo: Closes floating Window" },
 
-		-- <C-I> does nothing, <C-O> closes the buffer instead of jumping
-		{ mode = "n", lhs = "<C-o>", rhs = "<CMD>TodoToggle<CR>", desc = "Todo: Closes floating Window" },
-		{ mode = "n", lhs = "<C-i>", rhs = "<Nop>", desc = "Todo: Does nothing" },
-
 		-- <Enter> to toggle the todo
 		{ mode = "n", lhs = "<CR>", rhs = "<CMD>TodoToggleCheckbox<CR>", desc = "Todo: Toggles checkbox" },
 
