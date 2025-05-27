@@ -193,29 +193,13 @@ M._select_buffer = function(bufnr)
 end
 
 M._set_buffer_keymaps = function(bufnr)
-	local keymap_opts = { buffer = bufnr, silent = true }
-	-- "q" to close floating window
-	vim.keymap.set("n", "q", M.toggle, keymap_opts)
-	-- vim.keymap.set("n", "<Esc>", M.toggle, keymap_opts) -- This does not feel good
-	vim.keymap.set("n", "<C-c>", M.toggle, keymap_opts)
-
-	-- C-I does nothing,C-O closes the buffer instead of jumping
-	vim.keymap.set("n", "<C-o>", M.toggle, keymap_opts)
-	vim.keymap.set("n", "<C-i>", "<Nop>", keymap_opts)
-
-	-- Enter to toggle the todo
-	vim.keymap.set("n", "<CR>", M.toggle_checkbox, keymap_opts)
-
-	-- Tab and Shift-Tab to indent lines
-	vim.keymap.set("n", "<Tab>", "V><Esc>", keymap_opts)
-	vim.keymap.set("n", "<S-Tab>", "V<<Esc>", keymap_opts)
-	vim.keymap.set("x", "<Tab>", ">gv", keymap_opts)
-	vim.keymap.set("x", "<S-Tab>", "<gv", keymap_opts)
-
-	-- Auto-insert '- [ ] ' on new lines
-	vim.keymap.set("i", "<Enter>", "<Enter>- [ ] ", keymap_opts)
-	vim.keymap.set("n", "o", "o- [ ] ", keymap_opts)
-	-- vim.keymap.set("n", "O", "O- [ ] ", keymap_opts) -- This does not feel good
+	local keymap_opts = function(desc)
+		return { desc = desc, buffer = bufnr, silent = true }
+	end
+	for _, mapping in ipairs(M.config.mappings) do
+		vim.keymap.set(mapping.mode or "n", mapping.lhs, mapping.rhs, keymap_opts(mapping.desc))
+		print("keymap: " .. mapping.lhs)
+	end
 end
 
 M.select_current_buffer = function()
