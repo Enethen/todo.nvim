@@ -17,7 +17,7 @@ The aim of this plugin is to emulate a convenient, accessible and visually sober
 - **🔳 Minimalist Design**: Clean looking floating window with padding and disabled diagnostics
 - **💾 Save/Select**: Save your todo-lists to a configurable folder. Selects an existing todo-list with `TodoSelectCurrentBuffer`.
 - **🚫 Not lingering**: The floating window will automatically close upon losing focus.
-- **🔼 Resize**: Window automatically resize along with Neovim
+- 🔼 **Resize**: Use `TodoSetHeight` or `TodoSetWidth` to dynamically resize the floating window (overrides `config.width` or `config.height` until restart)
 
 ## 🎥 Demo
 

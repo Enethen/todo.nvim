@@ -223,4 +223,25 @@ M.select_current_buffer = function()
 	M.toggle()
 end
 
+local saturate = function(number)
+	return math.max(0.2, math.min(1, number))
+end
+M.set_width = function(width)
+	M.config.width = saturate(width or M.config.width)
+
+	if M.is_opened() then
+		M.toggle()
+		M.toggle()
+	end
+end
+
+M.set_height = function(height)
+	M.config.height = saturate(height or M.config.height)
+
+	if M.is_opened() then
+		M.toggle()
+		M.toggle()
+	end
+end
+
 return M
